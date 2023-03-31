@@ -2,7 +2,7 @@ env:
   WORKDIR: "/tmp/build"
   CIRRUS_CLONE_DEPTH: "1"
   rom: "los"
-
+ 
 task:
   name: "sides"
   timeout_in: 180m
