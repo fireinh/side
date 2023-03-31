@@ -1,5 +1,5 @@
 env: 
-  WORKDIR: "/tmp/build"
+  WORKDIR: "/tmp/b"
   CIRRUS_CLONE_DEPTH: "1"
   rom: "los"
  
