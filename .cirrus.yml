@@ -1,0 +1,46 @@
+env: 
+  WORKDIR: "/tmp/build"
+  CIRRUS_CLONE_DEPTH: "1"
+  rom: "los"
+
+task:
+  name: "sides"
+  timeout_in: 180m
+  container:
+    dockerfile: greengreen2212/ubuntu:20.04
+    cpu: 16
+    memory: 64G
+
+Sync:
+     - mkdir -p $WORKDIR/$rom
+     - cd $WORKDIR/$rom
+     - rm -rf .repo/local_manifests
+     - repo init --depth=1 --no-repo-verify -u https://github.com/LineageOS/android.git -b lineage-20.0 -g default,-mips,-darwin,-notdefault
+     - git clone https://github.com/trying122/local_manifest.git --depth 1 -b lin1 .repo/local_manifests
+     - repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j10
+
+Build:
+     - cd $WORKDIR/$rom
+     - export PATH="/usr/lib/ccache:$PATH"
+     - export CCACHE_DIR=$WORKDIR/ccache
+     - export CCACHE_EXEC=/usr/bin/ccache
+     - export USE_CCACHE=1
+     - export CCACHE_DEPEND=true
+     - export CCACHE_FILECLONE=true
+     - export CCACHE_LIMIT_MULTIPLE=0.9
+     - export CCACHE_NOCOMPRESS=true
+     - export CCACHE_NOHASHDIR=1
+     - which ccache
+     - ccache -M 100
+     - ccache -z
+     - source build/envsetup.sh
+     - lunch lineage_beryllium-user
+     - export TZ=Asia/Delhi
+     - export BUILD_USERNAME=beryllium
+     - export BUILD_HOSTNAME=user
+     - export SKIP_ABI_CHECKS=true
+     - export SKIP_BOOTJAR_CHECKS=true
+     - make bacon -j30
+     
+   
+    
